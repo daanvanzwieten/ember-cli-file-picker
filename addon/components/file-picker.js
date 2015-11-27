@@ -76,7 +76,18 @@ export default Component.extend({
     }
 
     if (this.get('multiple')) {
-      this.sendAction('filesLoaded', files);
+      if (this.get('readAs') === 'readAsFile') {
+        this.sendAction('filesLoaded', files);
+      } else {
+        let readFiles = [];
+        for (let i = 0; i < files.length; i++) {
+          this.readFile(files[i], this.get('readAs'))
+              .then((file) => {
+            readFiles[i] = file;
+          });
+        }
+        this.sendAction('filesLoaded', readFiles);
+      }
     } else {
       if (this.get('readAs') === 'readAsFile') {
         this.sendAction('fileLoaded', files[0]);
